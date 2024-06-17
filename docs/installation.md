@@ -6,4 +6,4 @@ To install the `scidx` library, use the following command:
 pip install scidx
 ```
 
-Return to [Index](./index.md)
+Return to [README](../README.md).
