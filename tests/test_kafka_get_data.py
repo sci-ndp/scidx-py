@@ -7,7 +7,7 @@ from scidx.client.get_kafka_data import consume_kafka_messages
 API_URL = "http://localhost:8000"
 KAFKA_HOST = '155.101.6.194'
 KAFKA_PORT = '9092'
-KAFKA_TOPIC = 'consumer_wind-w067'
+KAFKA_TOPIC = 'consumer_air_quality'
 
 @pytest.fixture
 def kafka_client():
@@ -38,7 +38,7 @@ async def test_kafka_get_and_consume(kafka_client):
     ))
 
     try:
-        await asyncio.sleep(30)
+        await asyncio.sleep(10)
     except asyncio.CancelledError:
         pass
     finally:
