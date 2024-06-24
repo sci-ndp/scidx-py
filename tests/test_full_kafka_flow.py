@@ -4,8 +4,10 @@ import random
 import string
 import time
 from aiokafka import AIOKafkaProducer
-from scidx.client.kafka_client import KafkaClient
-from scidx.client.get_kafka_data import consume_kafka_messages
+from scidx.client import sciDXClient
+from aiokafka import AIOKafkaConsumer
+from typing import List
+
 
 # Constants
 API_URL = "http://localhost:8000"
@@ -13,6 +15,45 @@ KAFKA_HOST = '155.101.6.194'
 KAFKA_PORT = '9092'
 KAFKA_TOPIC_PREFIX = 'random_topic_example_'
 OWNER_ORG = "test_org5"
+
+
+async def consume_kafka_messages(topic: str, host: str, port: str) -> List[str]:
+    """
+    Consume messages from a Kafka topic indefinitely until interrupted.
+
+    Parameters
+    ----------
+    topic : str
+        The Kafka topic name.
+    host : str
+        The Kafka host.
+    port : str
+        The Kafka port.
+
+    Returns
+    -------
+    List[str]
+        A list of consumed messages.
+    """
+    consumer = AIOKafkaConsumer(
+        topic,
+        bootstrap_servers=f"{host}:{port}",
+        auto_offset_reset='earliest',
+        enable_auto_commit=False,
+        fetch_max_bytes=104857600,  # 100MB fetch size
+        max_poll_records=1000  # Fetch up to 1000 messages per poll
+    )
+    await consumer.start()
+    messages = []
+    try:
+        async for msg in consumer:
+            messages.append(msg.value.decode('utf-8'))
+            await asyncio.sleep(0)  # Allow other tasks to run
+    except asyncio.CancelledError:
+        print("Consumption cancelled. Cleaning up...")
+    finally:
+        await consumer.stop()
+        return messages
 
 # Function to generate a unique Kafka topic name
 def generate_unique_kafka_topic():
@@ -37,7 +78,7 @@ class KafkaProducer:
 
 @pytest.fixture
 def kafka_client():
-    return KafkaClient(API_URL)
+    return sciDXClient(API_URL)
 
 @pytest.mark.asyncio
 async def test_kafka_full_flow(kafka_client):
@@ -61,7 +102,7 @@ async def test_kafka_full_flow(kafka_client):
     kafka_client.register_kafka(**dataset_data)
 
     # Add a delay to ensure the dataset is indexed
-    time.sleep(5)
+    time.sleep(2)
 
     # Step 4: Retrieve Kafka dataset information from API
     kafka_datasets = kafka_client.search_kafka(kafka_topic=kafka_topic, kafka_host=KAFKA_HOST, kafka_port=KAFKA_PORT)
@@ -86,7 +127,7 @@ async def test_kafka_full_flow(kafka_client):
     ))
 
     try:
-        await asyncio.sleep(10)
+        await asyncio.sleep(2)
     except asyncio.CancelledError:
         pass
     finally:
