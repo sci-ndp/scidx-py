@@ -1,10 +1,10 @@
 import requests
 
 def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
-                    kafka_topic: str, kafka_host: str, kafka_port: str,
-                    dataset_description: str = "") -> dict:
+                   kafka_topic: str, kafka_host: str, kafka_port: int, 
+                   dataset_description: str = "") -> dict:
     """
-    Register a new Kafka data source in the system.
+    Create a new Kafka dataset in the sciDX system.
 
     Parameters
     ----------
@@ -17,9 +17,9 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
     kafka_topic : str
         The Kafka topic name.
     kafka_host : str
-        The Kafka host.
-    kafka_port : str
-        The Kafka port.
+        The Kafka host address.
+    kafka_port : int
+        The Kafka port number.
     dataset_description : str, optional
         The description of the dataset (default is an empty string).
 
@@ -48,7 +48,7 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
         return response.json()
     else:
         error_message = (
-            f"Failed to create Kafka datasource. "
+            f"Failed to create Kafka dataset. "
             f"Request URL: {url}\n"
             f"Payload: {payload}\n"
             f"Response Status Code: {response.status_code}\n"
