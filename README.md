@@ -18,7 +18,7 @@ To install the library, you can use pip:
 pip install scidx
 ```
 
-For detailed installation instructions and dependencies, see [installation](docs/installation.md).
+For detailed installation instructions and dependencies, see [installation](https://github.com/sci-ndp/scidx-py/blob/main/docs/installation.md).
 
 ## Configuration
 
@@ -31,7 +31,7 @@ api_url = "http://your-api-url.com"
 client = sciDXClient(api_url)
 ```
 
-For detailed configuration instructions, see [Configuration](docs/configuration.md).
+For detailed configuration instructions, see [Configuration](https://github.com/sci-ndp/scidx-py/blob/main/docs/configuration.md).
 
 ## Usage
 
@@ -75,7 +75,7 @@ datasets = client.search_datasources(dataset_name="example_dataset")
 print(datasets)
 ```
 
-For more usage examples and detailed explanations, see [Usage](docs/usage.md).
+For more usage examples and detailed explanations, see [Usage](https://github.com/sci-ndp/scidx-py/blob/main/docs/usage.md).
 
 ## Testing
 
@@ -85,16 +85,16 @@ To run the tests for this project, you can use pytest:
 pytest
 ```
 
-For detailed testing instructions, see [Testing](docs/testing.md).
+For detailed testing instructions, see [Testing](https://github.com/sci-ndp/scidx-py/blob/main/docs/testing.md).
 
 ## Contributing
 
-We welcome contributions to the sciDX-PY project. To contribute, please follow the guidelines in [Contributing](docs/contributing.md).
+We welcome contributions to the sciDX-PY project. To contribute, please follow the guidelines in [Contributing](https://github.com/sci-ndp/scidx-py/blob/main/docs/contributing.md).
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE.md](docs/LICENSE.md) for more details.
+This project is licensed under the MIT License. See [LICENSE.md](https://github.com/sci-ndp/scidx-py/blob/main/docs/LICENSE.md) for more details.
 
 ## Contact
 
-For any questions or suggestions, please open an [issue](/docs/issues.md) on GitHub.
+For any questions or suggestions, please open an [issue](https://github.com/sci-ndp/scidx-py/blob/main/docs/issues.md) on GitHub.
