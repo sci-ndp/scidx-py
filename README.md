@@ -5,10 +5,11 @@ scidx is a Python library that allows you to interact with the sciDX REST API fo
 ## Features
 
 - Register organizations
-- Register datasets
+- Register URL resources
+- Register S3 resources
+- Register Kafka resources
 - Search organizations
-- Search datasets
-- Delete organizations
+- Search resources
 
 ## Installation
 
@@ -38,7 +39,7 @@ For detailed configuration instructions, see [Configuration](https://github.com/
 Here is a quick example of how to use the library:
 
 ```python
-from scidx.client import sciDXClient
+from scidx import sciDXClient
 
 # Initialize the client
 api_url = "http://your-api-url.com"
@@ -52,27 +53,33 @@ response = client.register_organization(
 )
 print(response)
 
-# Register a dataset
-dataset_data = {
-    "dataset_name": "example_dataset",
-    "dataset_title": "Example Dataset Title",
-    "owner_org": "example_org",
-    "resource_url": "http://example.com/resource",
-    "resource_name": "Example Resource Name",
-    "dataset_description": "This is a dataset for testing.",
-    "resource_description": "This is a resource for testing.",
-    "resource_format": "CSV"
-}
-response = client.register_datasource(**dataset_data)
+# Register a URL resource
+response = client.register_url(
+    resource_name="example_resource",
+    resource_title="Example Resource Title",
+    owner_org="example_org",
+    resource_url="http://example.com/resource",
+    notes="This is a resource for testing."
+)
+print(response)
+
+# Register an S3 resource
+response = client.register_s3(
+    resource_name="example_resource",
+    resource_title="Example Resource Title",
+    owner_org="example_org",
+    resource_s3="s3://example-bucket/resource",
+    notes="This is a resource for testing."
+)
 print(response)
 
 # Search for organizations
 organizations = client.search_organization()
 print(organizations)
 
-# Search for datasets
-datasets = client.search_datasources(dataset_name="example_dataset")
-print(datasets)
+# Search for resources
+resources = client.search_resource(resource_name="example_resource")
+print(resources)
 ```
 
 For more usage examples and detailed explanations, see [Usage](https://github.com/sci-ndp/scidx-py/blob/main/docs/usage.md).
