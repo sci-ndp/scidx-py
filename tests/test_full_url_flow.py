@@ -13,6 +13,7 @@ organization_name = generate_unique_name("pytest_organization")
 organization_data = {
     "name": organization_name,
     "title": "Pytest Organization",
+    "api_token": "test", # Ask REst sciDX API admin for a test token 
     "description": "Organization created for pytest."
 }
 url_data = {
@@ -20,6 +21,7 @@ url_data = {
     "resource_title": "Pytest Resource Title",
     "owner_org": organization_name,
     "resource_url": "http://example.com/resource",
+    "api_token": "test", # Ask REst sciDX API admin for a test token 
     "notes": "This is a resource for testing."
 }
 
@@ -31,20 +33,20 @@ def setup_and_cleanup():
     print("Setup: Checking if the organization already exists")
     existing_orgs = client.search_organization()
     print(f"Setup: Existing organizations: {existing_orgs}")
-    if organization_name in existing_orgs:
-        print(f"Setup: Organization {organization_name} already exists")
-        client.delete_organization(organization_name)
-        print(f"Setup: Deleted existing organization {organization_name}")
+    # if organization_name in existing_orgs:
+    #     print(f"Setup: Organization {organization_name} already exists")
+    #     client.delete_organization(organization_name)
+    #     print(f"Setup: Deleted existing organization {organization_name}")
 
     # Run the tests
     yield
 
     # Cleanup: Delete the organization after tests
-    try:
-        client.delete_organization(organization_name)
-        print(f"Cleanup: Deleted organization {organization_name}")
-    except Exception as e:
-        print(f"Cleanup: Failed to delete organization {organization_name}. Reason: {str(e)}")
+    # try:
+    #     client.delete_organization(organization_name)
+    #     print(f"Cleanup: Deleted organization {organization_name}")
+    # except Exception as e:
+    #     print(f"Cleanup: Failed to delete organization {organization_name}. Reason: {str(e)}")
 
 # Test to create an organization
 @pytest.mark.order(1)
