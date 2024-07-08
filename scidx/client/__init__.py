@@ -6,6 +6,7 @@ from .register_url import register_url
 from .register_s3 import register_s3
 from .register_kafka import register_kafka
 from .search_kafka import search_kafka
+from .get_api_token import get_api_token
 
 
 # Add the methods to sciDXClient
@@ -16,3 +17,4 @@ sciDXClient.search_resource = search_resource
 sciDXClient.register_url = register_url
 sciDXClient.register_kafka = register_kafka
 sciDXClient.register_s3 = register_s3
+sciDXClient.get_api_token = get_api_token
