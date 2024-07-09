@@ -50,7 +50,7 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
         "resource_name": resource_name,
         "dataset_description": dataset_description,
         "resource_description": resource_description,
-        "resource_format": resource_format,
+        "resource_format": resource_format.lower() if resource_format else None,
         "search_term": search_term
     }
     # Remove None values from params

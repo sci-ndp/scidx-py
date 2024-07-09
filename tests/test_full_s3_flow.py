@@ -1,6 +1,6 @@
 import pytest
 import uuid
-from scidx import sciDXClient
+from scidx.client import sciDXClient
 
 # Function to generate a unique name
 def generate_unique_name(base_name):
@@ -8,6 +8,8 @@ def generate_unique_name(base_name):
 
 # Global variables to store IDs and names
 api_url = "http://127.0.0.1:8000"
+USERNAME = "placeholder@placeholder.com"
+PASSWORD = "placeholder"
 client = sciDXClient(api_url)
 organization_name = generate_unique_name("pytest_organization")
 organization_data = {
@@ -20,12 +22,16 @@ s3_data = {
     "resource_title": "Pytest Resource Title",
     "owner_org": organization_name,
     "resource_s3": "s3://example-bucket/resource",
-    "notes": "This is a resource for testing."
+    "notes": "This is a resource for testing.",
+    "extras": {"key1": "value1", "key2": "value2"}
 }
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_and_cleanup():
     global client, organization_name, organization_data, s3_data
+
+    # Login to the client
+    client.login(USERNAME, PASSWORD)
 
     # Setup: Ensure the organization does not already exist
     print("Setup: Checking if the organization already exists")
