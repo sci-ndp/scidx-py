@@ -1,8 +1,7 @@
 import requests
 
-
 def register_url(self, resource_name: str, resource_title: str, owner_org: str,
-                 resource_url: str, api_token: str, notes: str = "") -> dict:
+                 resource_url: str, notes: str = "", extras: dict = None) -> dict:
     """
     Create a new URL resource in the sciDX system.
 
@@ -16,10 +15,10 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
         The name of the organization.
     resource_url : str
         The URL of the resource.
-    api_token : str
-        The authentication token from the sciDX REST API.
     notes : str, optional
         Additional notes about the resource (default is an empty string).
+    extras : dict, optional
+        Additional metadata to be added to the resource.
 
     Returns
     -------
@@ -32,15 +31,14 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
         If the API request fails with detailed error information.
     """
     url = f"{self.api_url}/url"
-    headers = {
-        "Authorization": f"Bearer {api_token}"
-    }
+    headers = self._get_headers()
     payload = {
         "resource_name": resource_name,
         "resource_title": resource_title,
         "owner_org": owner_org,
         "resource_url": resource_url,
-        "notes": notes
+        "notes": notes,
+        "extras": extras or {}
     }
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 201:

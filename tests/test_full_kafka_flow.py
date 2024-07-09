@@ -8,14 +8,14 @@ from scidx.client import sciDXClient
 from aiokafka import AIOKafkaConsumer
 from typing import List
 
-
 # Constants
 API_URL = "http://localhost:8000"
 KAFKA_HOST = '155.101.6.194'
 KAFKA_PORT = '9092'
 KAFKA_TOPIC_PREFIX = 'random_topic_example_'
-OWNER_ORG = "test_org5"
-
+OWNER_ORG = "test_org4"
+USERNAME = "placeholder@placeholder.com"
+PASSWORD = "placeholder"
 
 async def consume_kafka_messages(topic: str, host: str, port: str) -> List[str]:
     """
@@ -78,7 +78,9 @@ class KafkaProducer:
 
 @pytest.fixture
 def kafka_client():
-    return sciDXClient(API_URL)
+    client = sciDXClient(API_URL)
+    client.login(USERNAME, PASSWORD)
+    return client
 
 @pytest.mark.asyncio
 async def test_kafka_full_flow(kafka_client):
@@ -97,7 +99,8 @@ async def test_kafka_full_flow(kafka_client):
         "kafka_topic": kafka_topic,
         "kafka_host": KAFKA_HOST,
         "kafka_port": KAFKA_PORT,
-        "dataset_description": "This is a randomly generated Kafka topic registered as a CKAN dataset."
+        "dataset_description": "This is a randomly generated Kafka topic registered as a CKAN dataset.",
+        "extras": {"key1": "value1", "key2": "value2"}  # Including extras
     }
     kafka_client.register_kafka(**dataset_data)
 
@@ -105,19 +108,22 @@ async def test_kafka_full_flow(kafka_client):
     time.sleep(2)
 
     # Step 4: Retrieve Kafka dataset information from API
-    kafka_datasets = kafka_client.search_kafka(kafka_topic=kafka_topic, kafka_host=KAFKA_HOST, kafka_port=KAFKA_PORT)
+    kafka_datasets = kafka_client.search_resource(
+        resource_name=kafka_topic,
+        resource_format="kafka"
+    )
 
     # Ensure that at least one dataset is returned
     assert len(kafka_datasets) > 0, "No Kafka datasets found"
 
-    dataset_info = next((ds for ds in kafka_datasets if ds['resources'][0]['kafka_topic'] == kafka_topic), None)
+    dataset_info = next((ds for ds in kafka_datasets if ds['resources'][0]['name'] == kafka_topic), None)
     assert dataset_info is not None, f"Kafka topic {kafka_topic} not found in datasets"
 
     # Step 5: Consume messages from Kafka topic using retrieved information
-    resource = dataset_info['resources'][0]
-    kafka_host = resource['kafka_host']
-    kafka_port = resource['kafka_port']
-    kafka_topic = resource['kafka_topic']
+    extras = dataset_info['extras']
+    kafka_host = extras['host']
+    kafka_port = extras['port']
+    kafka_topic = extras['topic']
 
     print(f"Starting to consume messages from topic: {kafka_topic}")
     messages_task = asyncio.create_task(consume_kafka_messages(
