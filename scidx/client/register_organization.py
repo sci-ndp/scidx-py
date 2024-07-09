@@ -1,6 +1,6 @@
 import requests
 
-def register_organization(self, name: str, title: str, description: str = "") -> dict:
+def register_organization(self, name: str, title: str, api_token: str, description: str = "") -> dict:
     """
     Create a new organization in the sciDX REST API.
 
@@ -10,8 +10,10 @@ def register_organization(self, name: str, title: str, description: str = "") ->
         The name of the organization.
     title : str
         The title of the organization.
-    description : str
-        The description of the organization.
+    api_token : str
+        The authentication token from the sciDX REST API.
+    description : str, optional
+        The description of the organization (default is an empty string).
 
     Returns
     -------
@@ -24,12 +26,15 @@ def register_organization(self, name: str, title: str, description: str = "") ->
         If the API request fails with detailed error information.
     """
     url = f"{self.api_url}/organization"
+    headers = {
+        "Authorization": f"Bearer {api_token}"  # Ensure the token is formatted correctly
+    }
     payload = {
         "name": name,
         "title": title,
         "description": description
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 201:
         return response.json()
     else:

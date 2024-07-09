@@ -1,7 +1,7 @@
 import requests
 
 def register_s3(self, resource_name: str, resource_title: str, owner_org: str,
-                resource_s3: str, notes: str = "") -> dict:
+                resource_s3: str, keycloak_token: str, notes: str = "") -> dict:
     """
     Create a new S3 resource in the sciDX system.
 
@@ -15,6 +15,8 @@ def register_s3(self, resource_name: str, resource_title: str, owner_org: str,
         The name of the organization.
     resource_s3 : str
         The S3 path of the resource.
+    keycloak_token : str
+        The authentication token from Keycloak.
     notes : str, optional
         Additional notes about the resource (default is an empty string).
 
@@ -29,6 +31,9 @@ def register_s3(self, resource_name: str, resource_title: str, owner_org: str,
         If the API request fails with detailed error information.
     """
     url = f"{self.api_url}/s3"
+    headers = {
+        "Authorization": f"Bearer {keycloak_token}"  # Ensure the token is formatted correctly
+    }
     payload = {
         "resource_name": resource_name,
         "resource_title": resource_title,
@@ -36,9 +41,10 @@ def register_s3(self, resource_name: str, resource_title: str, owner_org: str,
         "resource_s3": resource_s3,
         "notes": notes
     }
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload, headers=headers)
     print(f"Request URL: {url}")
     print(f"Payload: {payload}")
+    print(f"Headers: {headers}")
     print(f"Response Status Code: {response.status_code}")
     print(f"Response Content: {response.content.decode('utf-8')}")
     if response.status_code == 201:
