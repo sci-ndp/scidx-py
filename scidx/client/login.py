@@ -17,7 +17,7 @@ def login(self, username: str, password: str) -> None:
         If the authentication request fails.
     """
     url = f"{self.api_url}/token"
-    response = requests.post(url, data={"username": username, "password": password})
+    response = requests.post(url, data={"grant_type": "password", "username": username, "password": password}, headers = {"Content-Type": "application/x-www-form-urlencoded"})
     if response.status_code == 200:
         self.token = response.json()["access_token"]
     else:
