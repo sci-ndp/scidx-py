@@ -26,4 +26,13 @@ This document provides an index of the functions available in the `scidx` librar
 
 - [delete_organization](./api/delete_organization.md)
 
+## Kafka
+
+- [create_kafka_stream](./api/create_kafka_stream.md)
+- [consume_kafka_messages](./api/consume_kafka_messages.md)
+
+## Initialization
+
+- [init_client](./api/init_client.md)
+
 Return to [README](../README.md)
