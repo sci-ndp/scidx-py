@@ -8,7 +8,8 @@ from .register_kafka import register_kafka
 from .get_api_token import get_api_token
 from .login import login
 from .logout import logout
-
+from .create_kafka_stream import create_kafka_stream
+from .consume_kafka_messages import consume_kafka_messages
 
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
@@ -20,3 +21,6 @@ sciDXClient.register_s3 = register_s3
 sciDXClient.get_api_token = get_api_token
 sciDXClient.login = login
 sciDXClient.logout = logout
+
+sciDXClient.create_kafka_stream = create_kafka_stream
+sciDXClient.consume_kafka_messages = consume_kafka_messages
