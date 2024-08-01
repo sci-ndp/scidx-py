@@ -18,22 +18,22 @@ PASSWORD = "placeholder"
 def generate_unique_kafka_topic():
     return KAFKA_TOPIC_PREFIX + ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
-class KafkaProducer:
-    def __init__(self, host, port, topic):
-        self.host = host
-        self.port = port
-        self.topic = topic
+# class KafkaProducer:
+#     def __init__(self, host, port, topic):
+#         self.host = host
+#         self.port = port
+#         self.topic = topic
 
-    async def send_incremental_messages(self, start_value: int, end_value: int, step: int = 1):
-        producer = AIOKafkaProducer(bootstrap_servers=f"{self.host}:{self.port}")
-        await producer.start()
-        try:
-            for i in range(start_value, end_value, step):
-                message = {"x_field": i, "y":i}
-                await producer.send_and_wait(self.topic, json.dumps(message).encode('utf-8'))
-                print(f"Sent message {i}: {message}")
-        finally:
-            await producer.stop()
+#     async def send_incremental_messages(self, start_value: int, end_value: int, step: int = 1):
+#         producer = AIOKafkaProducer(bootstrap_servers=f"{self.host}:{self.port}")
+#         await producer.start()
+#         try:
+#             for i in range(start_value, end_value, step):
+#                 message = {"x_field": i, "y": f"message_{i}"}
+#                 await producer.send_and_wait(self.topic, json.dumps(message).encode('utf-8'))
+#                 print(f"Sent message {i}: {message}")
+#         finally:
+#             await producer.stop()
 
 @pytest.fixture
 def kafka_client():
@@ -45,14 +45,14 @@ def kafka_client():
 async def test_kafka_stream_processing(kafka_client):
     kafka_topic = generate_unique_kafka_topic()
 
-    producer = KafkaProducer(KAFKA_HOST, KAFKA_PORT, kafka_topic)
-    await producer.send_incremental_messages(start_value=1, end_value=151, step=1)
+    # producer = KafkaProducer(KAFKA_HOST, KAFKA_PORT, kafka_topic)
+    # await producer.send_incremental_messages(start_value=1, end_value=151, step=1)
 
     dataset_data = {
         "dataset_name": kafka_topic,
         "dataset_title": "Incremental Values Example",
         "owner_org": OWNER_ORG,
-        "kafka_topic": kafka_topic,
+        "kafka_topic": 'CSCI',
         "kafka_host": KAFKA_HOST,
         "kafka_port": KAFKA_PORT,
         "dataset_description": "This dataset contains incremental values from 1 to 150.",
@@ -61,15 +61,15 @@ async def test_kafka_stream_processing(kafka_client):
             "key2": "value2"
         },
         "mapping": {
-            "x_field": "x_field",
-            "y_field": "y"
+            "x_field": "x",
+            "y": "y"
         }
     }
     kafka_client.register_kafka(**dataset_data)
 
     time.sleep(2)
 
-    stream_response = kafka_client.create_kafka_stream([kafka_topic], ["x_field>=40", "y_field<=80"])
+    stream_response = kafka_client.create_kafka_stream([kafka_topic], ["x_field>=0", "y>0"])
     print(stream_response)
 
     stream_topic = stream_response.get("topic")

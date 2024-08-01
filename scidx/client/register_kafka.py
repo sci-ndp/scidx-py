@@ -2,7 +2,8 @@ import requests
 
 def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
                    kafka_topic: str, kafka_host: str, kafka_port: int, 
-                   dataset_description: str = "") -> dict:
+                   dataset_description: str = "", extras: dict = None, 
+                   mapping: dict = None, processing: dict = None) -> dict:
     """
     Create a new Kafka dataset in the sciDX system.
 
@@ -13,7 +14,7 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
     dataset_title : str
         The title of the dataset.
     owner_org : str
-        The name of the organization.
+        The ID of the organization.
     kafka_topic : str
         The Kafka topic name.
     kafka_host : str
@@ -22,6 +23,12 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
         The Kafka port number.
     dataset_description : str, optional
         The description of the dataset (default is an empty string).
+    extras : dict, optional
+        Additional metadata to be added to the dataset.
+    mapping : dict, optional
+        Mapping information for the dataset (default is None).
+    processing : dict, optional
+        Processing information for the dataset (default is None).
 
     Returns
     -------
@@ -41,9 +48,13 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
         "kafka_topic": kafka_topic,
         "kafka_host": kafka_host,
         "kafka_port": kafka_port,
-        "dataset_description": dataset_description
+        "dataset_description": dataset_description,
+        "extras": extras or {},
+        "mapping": mapping or {},
+        "processing": processing or {}
     }
-    response = requests.post(url, json=payload)
+    headers = self._get_headers()
+    response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 201:
         return response.json()
     else:
