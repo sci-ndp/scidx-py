@@ -10,6 +10,7 @@ from .login import login
 from .logout import logout
 from .create_kafka_stream import create_kafka_stream
 from .consume_kafka_messages import consume_kafka_messages
+from .register_url import StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing
 
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
