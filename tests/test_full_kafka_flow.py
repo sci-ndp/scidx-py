@@ -29,9 +29,11 @@ class KafkaProducer:
         await producer.start()
         try:
             for i in range(start_value, end_value, step):
-                message = {"x_field": i, "y":i}
+                message = {
+                    "data_recipient": {"x_field": i, "y": i}, 
+                    "some_info": {"test1": "this is just some random additional info", "test2": "Some more random additional info"}
+                }
                 await producer.send_and_wait(self.topic, json.dumps(message).encode('utf-8'))
-                print(f"Sent message {i}: {message}")
         finally:
             await producer.stop()
 
@@ -63,6 +65,10 @@ async def test_kafka_stream_processing(kafka_client):
         "mapping": {
             "x_field": "x_field",
             "y_field": "y"
+        },
+        "processing": {
+            "data_key": "data_recipient",
+            "info_key": "some_info"
         }
     }
     kafka_client.register_kafka(**dataset_data)
@@ -76,31 +82,30 @@ async def test_kafka_stream_processing(kafka_client):
     assert stream_topic is not None, "Failed to create Kafka stream"
 
     print(f"Waiting for stream topic: {stream_topic} to be available...")
-    # time.sleep(10)
 
-    # # Timeout mechanism to ensure the test doesn't hang
-    # timeout_seconds = 30
-    # start_time = time.time()
-    # consumed_messages = []
+    consumer_object = kafka_client.consume_kafka_messages(topic=stream_topic)
 
-    # while True:
-    #     messages = kafka_client.consume_kafka_messages(topic=stream_topic)
-    #     consumed_messages.extend(messages)
+    # Wait for the first message to arrive and process it
+    while not consumer_object.messages:
+        print("No messages received yet...")
+        time.sleep(1)
 
-    #     if len(consumed_messages) >= 100 or (time.time() - start_time) > timeout_seconds:
-    #         break
+    print(f"Messages received: {len(consumer_object.messages)}")
+    for message in consumer_object.messages:
+        data = json.loads(message)
+        values = data.get("values", {})
+        print('values:', values)
+        for x_field_value in values.get("x_field", []):
+            assert 40 <= x_field_value <= 80, f"Unexpected value {x_field_value} in message {message}"
+        print('DONE!')
 
-    #     time.sleep(1)  # Short sleep to avoid overwhelming the API
+    # Print all received messages
+    print(f"Messages from stream topic {stream_topic}:\n")
+    for message in consumer_object.messages:
+        print(message)
 
-    # assert len(consumed_messages) == 100, f"Expected 100 messages, but received {len(consumed_messages)}"
-    # for message in consumed_messages:
-    #     data = json.loads(message)
-    #     value = data.get("x_field")
-    #     assert 1 <= value < 101, f"Unexpected value {value} in message {message}"
-
-    # print(f"Messages from stream topic {stream_topic}:\n")
-    # for message in consumed_messages:
-    #     print(message)
+    consumer_object.stop()
+    print("Stopped consumer.")
 
 if __name__ == "__main__":
     pytest.main([__file__])

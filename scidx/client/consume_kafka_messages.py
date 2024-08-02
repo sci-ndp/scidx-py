@@ -1,47 +1,55 @@
 import requests
+import threading
+import time
+import select
 
-def consume_kafka_messages(self, topic: str) -> list:
-    """
-    Consume Kafka messages from a given topic using the API.
+class KafkaMessageConsumer:
+    def __init__(self, url, params, headers, check_interval=0.5):
+        self.url = url
+        self.params = params
+        self.headers = headers
+        self.messages = []
+        self._stop_event = threading.Event()
+        self._check_interval = check_interval
+        self._thread = threading.Thread(target=self._consume_messages)
+        self._thread.start()
 
-    Parameters
-    ----------
-    topic : str
-        The Kafka topic to consume messages from.
+    def _consume_messages(self):
+        try:
+            with requests.get(self.url, params=self.params, headers=self.headers, stream=True) as response:
+                if response.status_code == 200:
+                    for line in self._iter_lines_with_timeout(response):
+                        if self._stop_event.is_set():
+                            print("Stop event set, exiting message consumption loop.")
+                            break
+                        if line:
+                            message = line.decode('utf-8')
+                            print(f"Received message: {message}")
+                            self.messages.append(message)
+                else:
+                    print(f"Error: Received unexpected status code {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error consuming Kafka messages: {str(e)}")
 
-    Returns
-    -------
-    list
-        A list of consumed messages.
+    def _iter_lines_with_timeout(self, response):
+        sock = response.raw._fp.fp.raw
+        while not self._stop_event.is_set():
+            ready = select.select([sock], [], [], self._check_interval)[0]
+            if ready:
+                line = response.raw.readline()
+                if not line:
+                    break
+                yield line
+            time.sleep(self._check_interval)
 
-    Raises
-    ------
-    HTTPError
-        If the API request fails with detailed error information.
-    """
+    def stop(self):
+        print("Stopping consumer...")
+        self._stop_event.set()
+        self._thread.join()
+        print("Consumer stopped.")
+
+def consume_kafka_messages(self, topic: str) -> KafkaMessageConsumer:
     url = f"{self.api_url}/stream"
     params = {"topic": topic}
     headers = self._get_headers()
-    response = requests.get(url, params=params, headers=headers, stream=True)
-
-    if response.status_code == 200:
-        messages = []
-        try:
-            for line in response.iter_lines():
-                if line:
-                    messages.append(line.decode('utf-8'))
-        except requests.exceptions.RequestException as e:
-            error_message = f"Error consuming Kafka messages: {str(e)}"
-            raise requests.exceptions.HTTPError(error_message)
-        finally:
-            # Cleanup or additional processing if needed
-            pass
-        return messages
-    else:
-        error_message = (
-            f"Failed to consume Kafka messages. "
-            f"Request URL: {url}\n"
-            f"Response Status Code: {response.status_code}\n"
-            f"Response Content: {response.content.decode('utf-8')}"
-        )
-        raise requests.exceptions.HTTPError(error_message, response=response)
+    return KafkaMessageConsumer(url, params, headers)
