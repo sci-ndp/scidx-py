@@ -29,16 +29,17 @@ def verify_resource_exists(client, search_term, expected_name):
     assert len(search_results) > 0, f"No resources found for search term: {search_term}"
     found = any(result["name"] == expected_name for result in search_results)
     assert found, f"Resource with name '{expected_name}' not found in search results."
+    return search_results[0]  # Return the first match for further verification
 
-def test_register_stream_url(client):
+def test_stream_url(client):
     """
-    Test registering a Stream URL resource and verifying it via search.
+    Test registering, retrieving, and updating a Stream URL resource.
     """
-    resource_name = "stream_resource" + generate_unique_name()
+    resource_name = "stream_resource_" + generate_unique_name()
     stream_processing = StreamProcessing(refresh_rate="5 seconds", data_key="results")
     
-    print(f"\nExample StreamProcessing Payload: {stream_processing.to_dict()}")
-    
+    # Register the resource
+    print("\n=== Registering Stream Resource ===")
     response = client.register_url(
         resource_name=resource_name,
         resource_title="Stream Resource Example",
@@ -49,23 +50,44 @@ def test_register_stream_url(client):
         notes="This is a stream resource for testing.",
         extras={"key1": "value1", "key2": "value2"}
     )
-    
     print(f"Registered Stream Resource Response: {response}")
-    assert "id" in response
-    assert response["id"] is not None
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register stream resource"
 
-    # Verify the resource exists
-    verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    # Retrieve and verify the resource
+    print("\n=== Verifying Registered Stream Resource ===")
+    resource = verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    print(f"Retrieved Resource: {resource}")
 
-def test_register_csv_url(client):
+    # Update the resource
+    updated_name = "updated_stream_resource_" + generate_unique_name()
+    updated_processing = StreamProcessing(refresh_rate="10 seconds", data_key="new_results")
+    print("\n=== Updating Stream Resource ===")
+    update_response = client.update_url(
+        resource_id=resource_id,
+        resource_name=updated_name,
+        resource_title="Updated Stream Resource",
+        processing=updated_processing,
+        notes="This is an updated stream resource for testing."
+    )
+    print(f"Updated Stream Resource Response: {update_response}")
+    assert update_response.get("message") == "Resource updated successfully", "Failed to update stream resource"
+
+    # Verify the updated resource
+    print("\n=== Verifying Updated Stream Resource ===")
+    updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
+    print(f"Updated Resource: {updated_resource}")
+    assert updated_resource["extras"]["processing"]["refresh_rate"] == "10 seconds", "Processing field not updated correctly"
+
+def test_csv_url(client):
     """
-    Test registering a CSV URL resource and verifying it via search.
+    Test registering, retrieving, and updating a CSV URL resource.
     """
-    resource_name = "csv_resource" + generate_unique_name()
+    resource_name = "csv_resource_" + generate_unique_name()
     csv_processing = CSVProcessing(delimiter=",", header_line=1, start_line=2)
     
-    print(f"\nExample CSVProcessing Payload: {csv_processing.to_dict()}")
-    
+    # Register the resource
+    print("\n=== Registering CSV Resource ===")
     response = client.register_url(
         resource_name=resource_name,
         resource_title="CSV Resource Example",
@@ -76,23 +98,44 @@ def test_register_csv_url(client):
         notes="This is a CSV resource for testing.",
         extras={"key1": "value1", "key2": "value2"}
     )
-    
     print(f"Registered CSV Resource Response: {response}")
-    assert "id" in response
-    assert response["id"] is not None
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register CSV resource"
 
-    # Verify the resource exists
-    verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    # Retrieve and verify the resource
+    print("\n=== Verifying Registered CSV Resource ===")
+    resource = verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    print(f"Retrieved Resource: {resource}")
 
-def test_register_txt_url(client):
+    # Update the resource
+    updated_name = "updated_csv_resource_" + generate_unique_name()
+    updated_processing = CSVProcessing(delimiter=";", header_line=2, start_line=3)
+    print("\n=== Updating CSV Resource ===")
+    update_response = client.update_url(
+        resource_id=resource_id,
+        resource_name=updated_name,
+        resource_title="Updated CSV Resource",
+        processing=updated_processing,
+        notes="This is an updated CSV resource for testing."
+    )
+    print(f"Updated CSV Resource Response: {update_response}")
+    assert update_response.get("message") == "Resource updated successfully", "Failed to update CSV resource"
+
+    # Verify the updated resource
+    print("\n=== Verifying Updated CSV Resource ===")
+    updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
+    print(f"Updated Resource: {updated_resource}")
+    assert updated_resource["extras"]["processing"]["delimiter"] == ";", "Processing field not updated correctly"
+
+def test_txt_url(client):
     """
-    Test registering a TXT URL resource and verifying it via search.
+    Test registering, retrieving, and updating a TXT URL resource.
     """
-    resource_name = "txt_resource" + generate_unique_name()
+    resource_name = "txt_resource_" + generate_unique_name()
     txt_processing = TXTProcessing(delimiter="\t", header_line=1, start_line=2)
     
-    print(f"\nExample TXTProcessing Payload: {txt_processing.to_dict()}")
-    
+    # Register the resource
+    print("\n=== Registering TXT Resource ===")
     response = client.register_url(
         resource_name=resource_name,
         resource_title="TXT Resource Example",
@@ -103,23 +146,44 @@ def test_register_txt_url(client):
         notes="This is a TXT resource for testing.",
         extras={"key1": "value1", "key2": "value2"}
     )
-    
     print(f"Registered TXT Resource Response: {response}")
-    assert "id" in response
-    assert response["id"] is not None
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register TXT resource"
 
-    # Verify the resource exists
-    verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    # Retrieve and verify the resource
+    print("\n=== Verifying Registered TXT Resource ===")
+    resource = verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    print(f"Retrieved Resource: {resource}")
 
-def test_register_json_url(client):
+    # Update the resource
+    updated_name = "updated_txt_resource_" + generate_unique_name()
+    updated_processing = TXTProcessing(delimiter=",", header_line=3, start_line=4)
+    print("\n=== Updating TXT Resource ===")
+    update_response = client.update_url(
+        resource_id=resource_id,
+        resource_name=updated_name,
+        resource_title="Updated TXT Resource",
+        processing=updated_processing,
+        notes="This is an updated TXT resource for testing."
+    )
+    print(f"Updated TXT Resource Response: {update_response}")
+    assert update_response.get("message") == "Resource updated successfully", "Failed to update TXT resource"
+
+    # Verify the updated resource
+    print("\n=== Verifying Updated TXT Resource ===")
+    updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
+    print(f"Updated Resource: {updated_resource}")
+    assert updated_resource["extras"]["processing"]["delimiter"] == ",", "Processing field not updated correctly"
+
+def test_json_url(client):
     """
-    Test registering a JSON URL resource and verifying it via search.
+    Test registering, retrieving, and updating a JSON URL resource.
     """
-    resource_name = "json_resource" + generate_unique_name()
+    resource_name = "json_resource_" + generate_unique_name()
     json_processing = JSONProcessing(info_key="count", data_key="results")
     
-    print(f"\nExample JSONProcessing Payload: {json_processing.to_dict()}")
-    
+    # Register the resource
+    print("\n=== Registering JSON Resource ===")
     response = client.register_url(
         resource_name=resource_name,
         resource_title="JSON Resource Example",
@@ -130,23 +194,44 @@ def test_register_json_url(client):
         notes="This is a JSON resource for testing.",
         extras={"key1": "value1", "key2": "value2"}
     )
-    
     print(f"Registered JSON Resource Response: {response}")
-    assert "id" in response
-    assert response["id"] is not None
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register JSON resource"
 
-    # Verify the resource exists
-    verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    # Retrieve and verify the resource
+    print("\n=== Verifying Registered JSON Resource ===")
+    resource = verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    print(f"Retrieved Resource: {resource}")
 
-def test_register_netcdf_url(client):
+    # Update the resource
+    updated_name = "updated_json_resource_" + generate_unique_name()
+    updated_processing = JSONProcessing(info_key="new_count", data_key="new_results")
+    print("\n=== Updating JSON Resource ===")
+    update_response = client.update_url(
+        resource_id=resource_id,
+        resource_name=updated_name,
+        resource_title="Updated JSON Resource",
+        processing=updated_processing,
+        notes="This is an updated JSON resource for testing."
+    )
+    print(f"Updated JSON Resource Response: {update_response}")
+    assert update_response.get("message") == "Resource updated successfully", "Failed to update JSON resource"
+
+    # Verify the updated resource
+    print("\n=== Verifying Updated JSON Resource ===")
+    updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
+    print(f"Updated Resource: {updated_resource}")
+    assert updated_resource["extras"]["processing"]["info_key"] == "new_count", "Processing field not updated correctly"
+
+def test_netcdf_url(client):
     """
-    Test registering a NetCDF URL resource and verifying it via search.
+    Test registering, retrieving, and updating a NetCDF URL resource.
     """
-    resource_name = "netcdf_resource" + generate_unique_name()
+    resource_name = "netcdf_resource_" + generate_unique_name()
     netcdf_processing = NetCDFProcessing(group="example_group")
     
-    print(f"\nExample NetCDFProcessing Payload: {netcdf_processing.to_dict()}")
-    
+    # Register the resource
+    print("\n=== Registering NetCDF Resource ===")
     response = client.register_url(
         resource_name=resource_name,
         resource_title="NetCDF Resource Example",
@@ -157,13 +242,34 @@ def test_register_netcdf_url(client):
         notes="This is a NetCDF resource for testing.",
         extras={"key1": "value1", "key2": "value2"}
     )
-    
     print(f"Registered NetCDF Resource Response: {response}")
-    assert "id" in response
-    assert response["id"] is not None
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register NetCDF resource"
 
-    # Verify the resource exists
-    verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    # Retrieve and verify the resource
+    print("\n=== Verifying Registered NetCDF Resource ===")
+    resource = verify_resource_exists(client, search_term=resource_name, expected_name=resource_name)
+    print(f"Retrieved Resource: {resource}")
+
+    # Update the resource
+    updated_name = "updated_netcdf_resource_" + generate_unique_name()
+    updated_processing = NetCDFProcessing(group="new_example_group")
+    print("\n=== Updating NetCDF Resource ===")
+    update_response = client.update_url(
+        resource_id=resource_id,
+        resource_name=updated_name,
+        resource_title="Updated NetCDF Resource",
+        processing=updated_processing,
+        notes="This is an updated NetCDF resource for testing."
+    )
+    print(f"Updated NetCDF Resource Response: {update_response}")
+    assert update_response.get("message") == "Resource updated successfully", "Failed to update NetCDF resource"
+
+    # Verify the updated resource
+    print("\n=== Verifying Updated NetCDF Resource ===")
+    updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
+    print(f"Updated Resource: {updated_resource}")
+    assert updated_resource["extras"]["processing"]["group"] == "new_example_group", "Processing field not updated correctly"
 
 if __name__ == "__main__":
     pytest.main([__file__])
