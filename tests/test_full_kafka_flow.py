@@ -47,13 +47,43 @@ def kafka_client():
 async def test_kafka_stream_processing(kafka_client):
     kafka_topic = generate_unique_kafka_topic()
 
+    # Sending messages to Kafka
     producer = KafkaProducer(KAFKA_HOST, KAFKA_PORT, kafka_topic)
     await producer.send_incremental_messages(start_value=1, end_value=151, step=1)
 
-    dataset_data = {
+    # Registering the Kafka dataset with incorrect information
+    incorrect_dataset_data = {
+        "dataset_name": kafka_topic,
+        "dataset_title": "Incorrect Kafka Dataset",
+        "owner_org": OWNER_ORG,
+        "kafka_topic": "wrong_topic",
+        "kafka_host": "wrong_host",
+        "kafka_port": 1234,
+        "dataset_description": "This dataset has incorrect Kafka configuration.",
+        "extras": {
+            "key1": "wrong_value1",
+            "key2": "wrong_value2"
+        },
+        "mapping": {
+            "x_field": "wrong_x_field",
+            "y_field": "wrong_y_field"
+        },
+        "processing": {
+            "data_key": "wrong_data_key",
+            "info_key": "wrong_info_key"
+        }
+    }
+
+    print("\n=== Registering Kafka Dataset with Incorrect Information ===")
+    response = kafka_client.register_kafka(**incorrect_dataset_data)
+    print(f"Registered Kafka Dataset Response: {response}")
+    resource_id = response.get("id")
+    assert resource_id, "Failed to register Kafka dataset with incorrect information"
+
+    # Update the dataset with the correct information
+    correct_dataset_data = {
         "dataset_name": kafka_topic,
         "dataset_title": "Incremental Values Example",
-        "owner_org": OWNER_ORG,
         "kafka_topic": kafka_topic,
         "kafka_host": KAFKA_HOST,
         "kafka_port": KAFKA_PORT,
@@ -71,15 +101,19 @@ async def test_kafka_stream_processing(kafka_client):
             "info_key": "some_info"
         }
     }
-    kafka_client.register_kafka(**dataset_data)
 
-    time.sleep(2)
+    print("\n=== Updating Kafka Dataset with Correct Information ===")
+    update_response = kafka_client.update_kafka(resource_id=resource_id, **correct_dataset_data)
+    print(f"Updated Kafka Dataset Response: {update_response}")
 
+    time.sleep(2)  # Ensure that the dataset update is processed
+
+    # Verify the update by attempting to create a Kafka stream with the correct information
     stream_response = kafka_client.create_kafka_stream([kafka_topic], ["x_field>=40", "y_field<=80"])
-    print(stream_response)
+    print(f"Stream Creation Response: {stream_response}")
 
     stream_topic = stream_response.get("topic")
-    assert stream_topic is not None, "Failed to create Kafka stream"
+    assert stream_topic is not None, "Failed to create Kafka stream after updating dataset"
 
     print(f"Waiting for stream topic: {stream_topic} to be available...")
 
@@ -94,7 +128,7 @@ async def test_kafka_stream_processing(kafka_client):
     for message in consumer_object.messages:
         data = json.loads(message)
         values = data.get("values", {})
-        print('values:', values)
+        print('Values:', values)
         for x_field_value in values.get("x_field", []):
             assert 40 <= x_field_value <= 80, f"Unexpected value {x_field_value} in message {message}"
         print('DONE!')
