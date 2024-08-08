@@ -1,7 +1,8 @@
+from typing import Any
 import requests
 
 def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
-                   kafka_topic: str, kafka_host: str, kafka_port: int, 
+                   kafka_topic: str, kafka_host: str, kafka_port: Any, 
                    dataset_description: str = "", extras: dict = None, 
                    mapping: dict = None, processing: dict = None) -> dict:
     """
@@ -47,7 +48,7 @@ def register_kafka(self, dataset_name: str, dataset_title: str, owner_org: str,
         "owner_org": owner_org,
         "kafka_topic": kafka_topic,
         "kafka_host": kafka_host,
-        "kafka_port": kafka_port,
+        "kafka_port": str(kafka_port),
         "dataset_description": dataset_description,
         "extras": extras or {},
         "mapping": mapping or {},
