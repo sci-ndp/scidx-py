@@ -2,6 +2,7 @@ import requests
 import threading
 import time
 import select
+from typing import Optional
 
 class KafkaMessageConsumer:
     def __init__(self, url, params=None, headers=None, check_interval=0.5):
