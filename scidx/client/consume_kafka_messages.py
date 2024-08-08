@@ -4,10 +4,10 @@ import time
 import select
 
 class KafkaMessageConsumer:
-    def __init__(self, url, params, headers, check_interval=0.5):
+    def __init__(self, url, params=None, headers=None, check_interval=0.5):
         self.url = url
-        self.params = params
-        self.headers = headers
+        self.params = params or {}
+        self.headers = headers or {}
         self.messages = []
         self._stop_event = threading.Event()
         self._check_interval = check_interval
@@ -24,7 +24,6 @@ class KafkaMessageConsumer:
                             break
                         if line:
                             message = line.decode('utf-8')
-                            print(f"Received message: {message}")
                             self.messages.append(message)
                 else:
                     print(f"Error: Received unexpected status code {response.status_code}")
@@ -48,8 +47,20 @@ class KafkaMessageConsumer:
         self._thread.join()
         print("Consumer stopped.")
 
-def consume_kafka_messages(self, topic: str) -> KafkaMessageConsumer:
+def consume_kafka_messages(self, id: Optional[str] = None, topic: Optional[str] = None,
+                           host: Optional[str] = None, port: Optional[int] = None) -> KafkaMessageConsumer:
     url = f"{self.api_url}/stream"
-    params = {"topic": topic}
-    headers = self._get_headers()
+    params = {}
+    
+    if id:
+        params['id'] = id
+    if topic:
+        params['topic'] = topic
+    if host:
+        params['host'] = host
+    if port:
+        params['port'] = port
+    
+    headers = self._get_headers()  # Assuming this method exists in your class
+
     return KafkaMessageConsumer(url, params, headers)
