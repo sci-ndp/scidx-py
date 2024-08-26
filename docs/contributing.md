@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for considering contributing to the sciDX-Py project! This document outlines the guidelines for contributing to the project.
+Thank you for considering contributing to the sciDX API project! This document outlines the guidelines for contributing to the project.
 
 ## How to Contribute
 
@@ -32,7 +32,7 @@ If you want to contribute code to the project, please follow these steps:
 2. **Clone the repository**: Clone your forked repository to your local machine.
     
 ```bash
-git clone https://github.com/your-username/scidx-py.git
+git clone https://github.com/your-username/scidx-api.git
 ```
 
 3. **Create a new branch**: Create a new branch for your feature or bugfix. Refer to the [Standard Branch Naming Convention](branch.md) for more information on naming branches.
