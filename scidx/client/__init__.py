@@ -20,8 +20,6 @@ from .update_s3 import update_s3
 from .update_kafka import update_kafka
 from .update_url import update_url
 
-
-
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
 sciDXClient.search_organization = search_organization
