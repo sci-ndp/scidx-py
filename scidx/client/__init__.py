@@ -20,6 +20,8 @@ from .update_s3 import update_s3
 from .update_kafka import update_kafka
 from .update_url import update_url
 
+from .delete_organization import delete_organization
+
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
 sciDXClient.search_organization = search_organization
@@ -37,3 +39,5 @@ sciDXClient.consume_kafka_messages = consume_kafka_messages
 sciDXClient.update_s3 = update_s3
 sciDXClient.update_kafka = update_kafka
 sciDXClient.update_url = update_url
+
+sciDXClient.delete_organization = delete_organization
