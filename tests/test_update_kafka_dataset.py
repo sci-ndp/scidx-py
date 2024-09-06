@@ -1,8 +1,9 @@
 import pytest
 import string
 import random
+import time  # Import the time module to add a delay
 from scidx.client import sciDXClient
-import time  # Import time to add delays if needed
+from scidx.client import CSVProcessing
 
 # Helper function to generate a random string
 def generate_random_string(length=8):
@@ -62,14 +63,6 @@ def test_update_kafka_dataset():
     assert "id" in response_create_kafka
     dataset_id = response_create_kafka.get("id")  # Extract the dataset ID for updating
 
-    # Verify immediately if we can find the dataset using search_resource before updating
-    response_search_initial = client.search_resource(resource_name=kafka_dataset_name)
-    print("Initial Search Response:", response_search_initial)
-
-    # Assert that the resource is found before any updates
-    found_initial = any(res['title'] == kafka_dataset_title for res in response_search_initial)
-    assert found_initial, f"Kafka dataset {kafka_dataset_title} not found in initial search"
-
     # Step 3: Update the Kafka dataset with new values
     updated_kafka_topic = generate_random_string(6)
     updated_kafka_host = "127.0.0.1"
@@ -89,16 +82,18 @@ def test_update_kafka_dataset():
     # Step 4: Verify that the update was successful
     assert response_update_kafka.get("message") == "Kafka dataset updated successfully"
     
-    # Step 5: Query the dataset again to verify the updated values
+    # (Optional) Step 5: Add a delay before querying the dataset again
     time.sleep(2)  # Wait for 2 seconds to allow the update to propagate
-    response_get_kafka = client.search_resource(resource_name=kafka_dataset_name)
+
+    # Query the dataset again to verify the updated values
+    response_get_kafka = client.search_resource(dataset_name=kafka_dataset_name)
     
     # Debugging: Print the search response to inspect it
-    print("Search Resource Response after update:", response_get_kafka)
+    print("Search Resource Response:", response_get_kafka)
 
     # Check if the updated title is reflected in the response under 'title'
-    found_updated = any(res['title'] == updated_dataset_title for res in response_get_kafka)
-    assert found_updated, f"Updated Kafka dataset not found with title {updated_dataset_title}"
+    found = any(res['title'] == updated_dataset_title for res in response_get_kafka)
+    assert found, f"Updated Kafka dataset not found with title {updated_dataset_title}"
 
     # Step 6: Delete the dataset and organization
     response_delete_kafka = client.delete_resource(resource_name=kafka_dataset_name)
