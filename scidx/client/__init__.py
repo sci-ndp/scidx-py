@@ -21,6 +21,7 @@ from .update_kafka import update_kafka
 from .update_url import update_url
 
 from .delete_organization import delete_organization
+from .delete_resource import delete_resource
 
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
@@ -41,3 +42,5 @@ sciDXClient.update_kafka = update_kafka
 sciDXClient.update_url = update_url
 
 sciDXClient.delete_organization = delete_organization
+sciDXClient.delete_resource = delete_resource
+
