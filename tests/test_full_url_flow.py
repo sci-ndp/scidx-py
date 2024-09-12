@@ -78,6 +78,13 @@ def test_stream_url(client):
     updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
     print(f"Updated Resource: {updated_resource}")
     assert updated_resource["extras"]["processing"]["refresh_rate"] == "10 seconds", "Processing field not updated correctly"
+    
+    # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting Stream Resource ===")
+    delete_response = client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
+
 
 def test_csv_url(client):
     """
@@ -126,6 +133,12 @@ def test_csv_url(client):
     updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
     print(f"Updated Resource: {updated_resource}")
     assert updated_resource["extras"]["processing"]["delimiter"] == ";", "Processing field not updated correctly"
+    
+    # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting CSV Resource ===")
+    delete_response = client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
 def test_txt_url(client):
     """
@@ -174,6 +187,12 @@ def test_txt_url(client):
     updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
     print(f"Updated Resource: {updated_resource}")
     assert updated_resource["extras"]["processing"]["delimiter"] == ",", "Processing field not updated correctly"
+    
+    # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting TXT Resource ===")
+    delete_response = client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
 def test_json_url(client):
     """
@@ -222,6 +241,12 @@ def test_json_url(client):
     updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
     print(f"Updated Resource: {updated_resource}")
     assert updated_resource["extras"]["processing"]["info_key"] == "new_count", "Processing field not updated correctly"
+    
+        # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting JSON Resource ===")
+    delete_response = client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
 def test_netcdf_url(client):
     """
@@ -270,6 +295,12 @@ def test_netcdf_url(client):
     updated_resource = verify_resource_exists(client, search_term=updated_name, expected_name=updated_name)
     print(f"Updated Resource: {updated_resource}")
     assert updated_resource["extras"]["processing"]["group"] == "new_example_group", "Processing field not updated correctly"
+    
+    # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting NetCDF Resource ===")
+    delete_response = client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
 if __name__ == "__main__":
     pytest.main([__file__])

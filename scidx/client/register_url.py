@@ -98,7 +98,7 @@ class NetCDFProcessing:
 
 
 def register_url(self, resource_name: str, resource_title: str, owner_org: str,
-                 resource_url: str, file_type: str, processing: Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing],
+                 resource_url: str, file_type: str = None, processing: Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing] = None,
                  notes: str = "", extras: dict = None, mapping: dict = None) -> dict:
     """
     Create a new URL resource in the sciDX system.
@@ -113,12 +113,12 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
         The name of the organization.
     resource_url : str
         The URL of the resource.
-    file_type : str
+    file_type : str, optional
         The type of the file (e.g., stream, CSV, TXT, JSON, NetCDF).
-    processing : Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing]
+    processing : Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing], optional
         The processing information specific to the file type.
     notes : str, optional
-        Additional notes about the resource (default is an empty string).
+        Additional notes about the resource.
     extras : dict, optional
         Additional metadata to be added to the resource.
     mapping : dict, optional
@@ -128,25 +128,6 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
     -------
     dict
         A dictionary containing the response from the API.
-
-    Raises
-    ------
-    HTTPError
-        If the API request fails with detailed error information.
-
-    Examples
-    --------
-    Example usage for a Stream resource:
-    >>> stream_processing = StreamProcessing(refresh_rate="5 seconds", data_key="results")
-    >>> client.register_url("resource_name", "resource_title", "owner_org", "http://example.com", "stream", stream_processing)
-
-    Example usage for a CSV resource:
-    >>> csv_processing = CSVProcessing(delimiter=",", header_line=1, start_line=2)
-    >>> client.register_url("resource_name", "resource_title", "owner_org", "http://example.com", "CSV", csv_processing)
-
-    Example usage for a JSON resource:
-    >>> json_processing = JSONProcessing(info_key="count", data_key="results")
-    >>> client.register_url("resource_name", "resource_title", "owner_org", "http://example.com", "JSON", json_processing)
     """
     url = f"{self.api_url}/url"
     headers = self._get_headers()
@@ -157,22 +138,19 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
         "resource_title": resource_title,
         "owner_org": owner_org,
         "resource_url": resource_url,
-        "file_type": file_type,
         "notes": notes,
         "extras": extras or {},
         "mapping": mapping or {},
-        "processing": processing.to_dict(),
     }
+
+    if file_type:
+        payload["file_type"] = file_type
+    if processing:
+        payload["processing"] = processing.to_dict()
 
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 201:
         return response.json()
     else:
-        error_message = (
-            f"Failed to create URL resource. "
-            f"Request URL: {url}\n"
-            f"Payload: {payload}\n"
-            f"Response Status Code: {response.status_code}\n"
-            f"Response Content: {response.content.decode('utf-8')}"
-        )
-        raise requests.exceptions.HTTPError(error_message, response=response)
+        raise requests.exceptions.HTTPError(f"Error: {response.content.decode('utf-8')}")
+

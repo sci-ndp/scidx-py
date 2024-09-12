@@ -1,3 +1,4 @@
+from typing import Optional
 import requests
 import threading
 import time
