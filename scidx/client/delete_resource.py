@@ -1,13 +1,14 @@
 import requests
 
-def delete_resource(self, resource_name: str) -> dict:
+
+def delete_resource(self, resource_id: str) -> dict:
     """
-    Delete a resource (e.g., Kafka, URL, S3) in the sciDX REST API.
+    Delete a resource in the sciDX system.
 
     Parameters
     ----------
-    resource_name : str
-        The name of the resource to be deleted.
+    resource_id : str
+        The ID of the resource to be deleted.
 
     Returns
     -------

@@ -36,7 +36,8 @@ class KafkaProducer:
                 await producer.send_and_wait(self.topic, json.dumps(message).encode('utf-8'))
         finally:
             await producer.stop()
-
+        
+        
 @pytest.fixture
 def kafka_client():
     client = sciDXClient(API_URL)
@@ -140,6 +141,13 @@ async def test_kafka_stream_processing(kafka_client):
 
     consumer_object.stop()
     print("Stopped consumer.")
+    
+    # Ensure the resource is deleted at the end of the test
+    print("\n=== Deleting Kafka Resource ===")
+    delete_response = kafka_client.delete_resource(resource_id)
+    print(f"Deleted resource: {delete_response}")
+    assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete Kafka resource"
+    
 
 if __name__ == "__main__":
     pytest.main([__file__])
