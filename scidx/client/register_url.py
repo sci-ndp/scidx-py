@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 import requests
 
 class StreamProcessing:
@@ -98,8 +98,8 @@ class NetCDFProcessing:
 
 
 def register_url(self, resource_name: str, resource_title: str, owner_org: str,
-                 resource_url: str, file_type: str = None, processing: Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing] = None,
-                 notes: str = "", extras: dict = None, mapping: dict = None) -> dict:
+                 resource_url: str, file_type: str, processing: Optional[Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing]] = None,
+                 notes: str = "", extras: dict = None, mapping: Optional[dict] = None) -> dict:
     """
     Create a new URL resource in the sciDX system.
 

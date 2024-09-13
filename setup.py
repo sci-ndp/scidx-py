@@ -16,7 +16,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
     name='scidx',
-    version='0.0.0',
+    version='0.3.0',
     description='Python client library for interacting with the sciDX API',
     long_description=long_description,
     long_description_content_type='text/markdown',

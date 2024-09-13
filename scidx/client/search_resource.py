@@ -57,10 +57,6 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
     params = {k: v for k, v in params.items() if v is not None}
 
     response = requests.get(url, params=params)
-    # print(f"Request URL: {url}")
-    # print(f"Params: {params}")
-    # print(f"Response Status Code: {response.status_code}")
-    # print(f"Response Content: {response.content.decode('utf-8')}")
     if response.status_code == 200:
         return response.json()
     else:
