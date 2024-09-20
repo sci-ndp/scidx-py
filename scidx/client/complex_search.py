@@ -2,7 +2,7 @@ import requests
 from typing import Optional, List
 
 
-def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Optional[str] = None,
+def complex_search(self, dataset_name: Optional[str] = None, dataset_title: Optional[str] = None,
                     owner_org: Optional[str] = None, resource_url: Optional[str] = None,
                     resource_name: Optional[str] = None, dataset_description: Optional[str] = None,
                     resource_description: Optional[str] = None, resource_format: Optional[str] = None,
@@ -43,7 +43,7 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
     HTTPError
         If the API request fails with detailed error information.
     """
-    url = f"{self.api_url}/search"
+    url = f"{self.api_url}/search/complex"
     params = {
         "dataset_name": dataset_name,
         "dataset_title": dataset_title,
@@ -59,7 +59,7 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    response = requests.get(url, params=params)
+    response = requests.post(url, json=params)
     if response.status_code == 200:
         return response.json()
     else:

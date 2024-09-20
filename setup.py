@@ -25,6 +25,9 @@ setup(
     url='https://github.com/sci-ndp/scidx-py',
     packages=find_packages(),
     install_requires=requirements,
+    extras_require={
+        'staging': staging_requirements
+    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',

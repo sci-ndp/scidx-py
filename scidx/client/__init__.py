@@ -7,6 +7,7 @@ from .register_kafka import register_kafka
 
 from .search_resource import search_resource
 from .search_organization import search_organization
+from .complex_search import complex_search
 
 from .get_api_token import get_api_token
 from .login import login
@@ -29,6 +30,7 @@ from .delete_resource import delete_resource
 sciDXClient.register_organization = register_organization
 sciDXClient.search_organization = search_organization
 sciDXClient.search_resource = search_resource
+sciDXClient.complex_search = complex_search
 sciDXClient.register_url = register_url
 sciDXClient.register_kafka = register_kafka
 sciDXClient.register_s3 = register_s3
