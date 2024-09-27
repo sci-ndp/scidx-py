@@ -3,3 +3,4 @@ pytest
 pytest-order
 aiokafka
 pytest-asyncio
+python-dateutil

@@ -14,6 +14,10 @@ with open('AUTHORS', 'r', encoding='utf-8') as f:
 with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = f.read().splitlines()
 
+# Read staging requirements
+with open('staging-requirements.txt', 'r',  encoding='utf-8') as f:
+    staging_requirements = f.read().splitlines()
+
 setup(
     name='scidx',
     version='0.3.0',
