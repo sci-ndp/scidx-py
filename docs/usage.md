@@ -22,6 +22,9 @@ This document provides an index of the functions available in the `scidx` librar
 - [search_datasources](./api/search_datasource.md)
 - [search_resource](./api/search_resource.md)
 
+## Query
+- [query_array](./api/query_array.md)
+
 ## Deletion
 
 - [delete_organization](./api/delete_organization.md)
