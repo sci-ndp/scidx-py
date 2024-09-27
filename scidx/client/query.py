@@ -71,9 +71,46 @@ def _get_data_from_staging(staging_handle: str, var_name: str, staging_socket: s
         raise StagingFailure("registered data not found in staging.")
     return(data, parser.isoparse(timestamp))
 
-
 def query_array(self, source: str,  var_name: str, lb: tuple[int], ub: tuple[int], dataset_name: Optional[str] = None, dataset_title: Optional[str] = None,
             owner_org: Optional[str] = None, **kwargs) -> list[tuple]:
+    """
+    Download a subset of an array within a dataset previously registered as external data with sciDX.
+
+    Parameters
+    ----------
+    source : str
+        The name of the external source.
+    var_name : str
+        The name of the array to access.
+    lb : tuple[int]
+        The lower-bounds of array indices to access.
+    ub : tuple[int]
+        The upper-bounds of array indices to access.
+    dataset_name : str, optional
+        The name of the dataset.
+    dataset_title : str, optional
+        The title of the dataset.
+    owner_org : str, optional
+        The ID of the organization
+    timestamp : str or datetime, optional
+        Find a result nearest in time to the given timestamp.
+    time_direction : TimeDirection
+        Either `TimeDirection.FUTURE` or `TimeDirection.PAST`. If the former, and `timestamp` is given, then "nearest in time" looks forward in time; if the latter, backwards. Default behavior is forward-looking.
+    start_time : str or datetime, optional
+        The start of a time interval, which stretches to the infinite future if end_time is not given
+    end_time: str or datetime, optional
+        The end of a time interval, which stretches to the infinite past if start_time is not given.
+
+    Returns
+    -------
+    list[Tuple[NDArray, datetime, dict]]
+        A list of tuples, one per matching dataset. Each tuple consists of the matching subset, the timestamp of the dataset or None, and a metadata dict for the dataset.
+    
+    Raises
+    ------
+    Exception
+        If the query fails for any reason other than no results found.
+    """
     if not DXSpacesClient:
         raise NotImplementedError("querying requires beta staging support. Please build scidx[staging].")
     if not len(lb) == len(ub):

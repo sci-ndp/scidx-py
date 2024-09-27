@@ -12,8 +12,8 @@ Download a subset of an array within a dataset previously registered as external
 - `owner_org` (str): The ID of the organization. (Optional)
 ### Temporal search parameters
 - `timestamp` (str or datetime): find a result nearest in time to the given timestamp. (Optional)
-- `time_direction` (TimeDirection): either `TimeDirection.FUTURE` or `TimeDirection.PAST`. If the former, and `timestamp` is given, then "nearest in time" looks forward in time; if the latter, backwards. Default behavior is forward-looking.
-- `start_time` and `end_time` (str or datetime): these two parameters define a time interval that filters results. If either is absent, then the interval is endless in that direction. If `timestamp` is set, these parameters are ignored.
+- `time_direction` (TimeDirection): either `TimeDirection.FUTURE` or `TimeDirection.PAST`. If the former, and `timestamp` is given, then "nearest in time" looks forward in time; if the latter, backwards. Default behavior is forward-looking. (Optional)
+- `start_time` and `end_time` (str or datetime): these two parameters define a time interval that filters results. If either is absent, then the interval is endless in that direction. If `timestamp` is set, these parameters are ignored. (Optional)
 
 ## Returns
 
