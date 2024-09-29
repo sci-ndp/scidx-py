@@ -7,7 +7,6 @@ from .register_kafka import register_kafka
 
 from .search_resource import search_resource
 from .search_organization import search_organization
-from .complex_search import complex_search
 
 from .get_api_token import get_api_token
 from .login import login
