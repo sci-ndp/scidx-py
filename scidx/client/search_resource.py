@@ -6,7 +6,8 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
                     owner_org: Optional[str] = None, resource_url: Optional[str] = None,
                     resource_name: Optional[str] = None, dataset_description: Optional[str] = None,
                     resource_description: Optional[str] = None, resource_format: Optional[str] = None,
-                    search_term: Optional[str] = None) -> List[dict]:
+                    search_term: Optional[str] = None, filter_list: Optional[list[str]] = [],
+                    timestamp: Optional[str] = None) -> List[dict]:
     """
     Search for resources in the sciDX system by various parameters.
 
@@ -30,6 +31,10 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
         The format of the dataset resource.
     search_term : Optional[str]
         A term to search across all fields.
+    filter_list : Optional[str]
+        A list of field filters
+    timestamp : str, optional
+        A formatted time range to filter results
 
     Returns
     -------
@@ -51,12 +56,14 @@ def search_resource(self, dataset_name: Optional[str] = None, dataset_title: Opt
         "dataset_description": dataset_description,
         "resource_description": resource_description,
         "resource_format": resource_format.lower() if resource_format else None,
-        "search_term": search_term
+        "search_term": search_term,
+        "filter_list": filter_list,
+        "timestamp": timestamp
     }
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    response = requests.get(url, params=params)
+    response = requests.post(url, json=params)
     if response.status_code == 200:
         return response.json()
     else:

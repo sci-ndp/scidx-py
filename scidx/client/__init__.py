@@ -20,10 +20,13 @@ from .update_s3 import update_s3
 from .update_kafka import update_kafka
 from .update_url import update_url
 
+from .query import query_array
+from .query import TimeDirection
 
 from .delete_resource import delete_resource
 from .delete_organization import delete_organization
 from .delete_resource import delete_resource
+
 
 # Add the methods to sciDXClient
 sciDXClient.register_organization = register_organization
@@ -43,6 +46,7 @@ sciDXClient.update_s3 = update_s3
 sciDXClient.update_kafka = update_kafka
 sciDXClient.update_url = update_url
 
+sciDXClient.query_array = query_array
 
 sciDXClient.delete_organization = delete_organization
 sciDXClient.delete_resource = delete_resource

@@ -1,4 +1,5 @@
 from typing import Union, Optional
+from datetime import datetime
 import requests
 
 class StreamProcessing:
@@ -99,7 +100,7 @@ class NetCDFProcessing:
 
 def register_url(self, resource_name: str, resource_title: str, owner_org: str,
                  resource_url: str, file_type: str, processing: Optional[Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing]] = None,
-                 notes: str = "", extras: dict = None, mapping: Optional[dict] = None) -> dict:
+                 notes: str = "", extras: dict = None, mapping: Optional[dict] = None, timestamp: Optional[datetime] = None) -> dict:
     """
     Create a new URL resource in the sciDX system.
 
@@ -119,6 +120,7 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
         The processing information specific to the file type.
     notes : str, optional
         Additional notes about the resource.
+    timestamp : datetime
     extras : dict, optional
         Additional metadata to be added to the resource.
     mapping : dict, optional
@@ -131,6 +133,11 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
     """
     url = f"{self.api_url}/url"
     headers = self._get_headers()
+
+    if timestamp:
+        if not extras:
+            extras = {}
+        extras["timestamp"] = timestamp.strftime('%Y-%m-%dT%H:%M:%S')
 
     # Build the payload
     payload = {

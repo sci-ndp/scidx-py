@@ -14,6 +14,10 @@ with open('AUTHORS', 'r', encoding='utf-8') as f:
 with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = f.read().splitlines()
 
+# Read staging requirements
+with open('staging-requirements.txt', 'r',  encoding='utf-8') as f:
+    staging_requirements = f.read().splitlines()
+
 setup(
     name='scidx',
     version='0.3.0',
@@ -25,6 +29,9 @@ setup(
     url='https://github.com/sci-ndp/scidx-py',
     packages=find_packages(),
     install_requires=requirements,
+    extras_require={
+        'staging': staging_requirements
+    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
