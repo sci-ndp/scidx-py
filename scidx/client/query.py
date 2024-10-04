@@ -41,7 +41,7 @@ def _get_query_time_string(**kwargs):
         if 'time_direction' in kwargs:
             if not isinstance(kwargs['time_direction'], TimeDirection):
                 raise ValueError("time_direction should be FUTURE or PAST")
-            tstamp_direction = kwargs['tstamp_direction']
+            tstamp_direction = kwargs['time_direction']
         return(f'{tstamp_direction}{tstamp_str}')
     time_string = None
     if 'start_time' in kwargs:
