@@ -1,14 +1,16 @@
 import requests
 
 
-def delete_resource(self, resource_id: str) -> dict:
+def delete_resource(self, resource_name: str = None, resource_id: str = None) -> dict:
     """
     Delete a resource in the sciDX system.
 
     Parameters
     ----------
+    resource_name : str
+        The name of the resource to be deleted.
     resource_id : str
-        The ID of the resource to be deleted.
+        The id of the resource to be deleted.
 
     Returns
     -------
@@ -20,14 +22,25 @@ def delete_resource(self, resource_id: str) -> dict:
     HTTPError
         If the API request fails with detailed error information.
     """
-    # Define the URL for the DELETE request using the resource_name
-    url = f"{self.api_url}/{resource_name}"
+    if bool(resource_name) == bool(resource_id):
+        raise ValueError("exactly one of resource_name and resource_id must not be None")
+
+    
+    # Define the URL for the DELETE request using the resource_name or resource_id
+    url = f"{self.api_url}/resource"
+    if resource_name:
+        url = url + f"/{resource_name}"
+  
+    # Set parameters (either resource_id or nothing)
+    params = {}
+    if resource_id:
+        params["resource_id"] = resource_id
     
     # Get headers for authorization or other needed parameters
     headers = self._get_headers()
 
     # Make the DELETE request to the API
-    response = requests.delete(url, headers=headers)
+    response = requests.delete(url, headers=headers, params=params)
     
     # If the response is successful, return the confirmation message
     if response.status_code == 200:

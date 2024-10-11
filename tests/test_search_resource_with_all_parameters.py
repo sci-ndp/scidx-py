@@ -1,8 +1,8 @@
 import pytest
 import string
 import random
-from scidx.client import sciDXClient
 from scidx.client import CSVProcessing
+from . import conftest
 
 # Helper function to generate a random string
 def generate_random_string(length=8):
@@ -13,13 +13,10 @@ def generate_random_string(length=8):
     return ''.join(random.choice(letters) for i in range(length))
 
 # Test for searching resources using all available parameters
-def test_search_resource_with_all_parameters():
+def test_search_resource_with_all_parameters(client):
     """
     Test the ability to search for resources in the system using all available parameters.
     """
-    # Create a client instance with the actual API URL
-    client = sciDXClient(api_url="http://localhost:8765")
-    
     # Set the token for authentication
     client.token = "test"
     

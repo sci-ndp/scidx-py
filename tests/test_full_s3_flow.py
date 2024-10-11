@@ -1,25 +1,12 @@
+import os
 import pytest
 import random
 import string
-from scidx.client import sciDXClient
 
-# Constants
-API_URL = "http://localhost:8000"
-OWNER_ORG = "test_org"
-USERNAME = "placeholder@placeholder.com"
-PASSWORD = "placeholder"
+SCIDX_ORG=os.environ["SCIDX_ORG"]
 
 def generate_unique_name():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-
-@pytest.fixture
-def client():
-    """
-    Fixture to create and login the client for testing.
-    """
-    client = sciDXClient(API_URL)
-    client.login(USERNAME, PASSWORD)
-    return client
 
 def verify_resource_exists(client, search_term, expected_name):
     """
@@ -41,7 +28,7 @@ def test_s3_resource_flow(client):
     incorrect_s3_data = {
         "resource_name": resource_name,
         "resource_title": "Incorrect S3 Resource Title",
-        "owner_org": OWNER_ORG,
+        "owner_org": SCIDX_ORG,
         "resource_s3": "s3://wrong-bucket/resource",
         "notes": "This is an incorrect S3 resource for testing.",
         "extras": {"wrong_key1": "wrong_value1", "wrong_key2": "wrong_value2"}
