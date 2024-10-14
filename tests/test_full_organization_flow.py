@@ -1,23 +1,16 @@
 import pytest
 import uuid
-from scidx import sciDXClient
+from . import conftest
 
 # Function to generate a unique organization name
 def generate_unique_name(base_name):
     return f"{base_name}_{uuid.uuid4().hex[:6]}"
 
-# Global variables to store IDs and names
-api_url = "http://127.0.0.1:8000"
-USERNAME = "placeholder@placeholder.com"
-PASSWORD = "placeholder"
-
 @pytest.fixture(scope="module", autouse=True)
-def setup_and_cleanup():
-    global client, organization_name, organization_data
+def setup_and_cleanup(client):
+    global organization_name, organization_data
 
-    # Initialize client and login to get the token
-    client = sciDXClient(api_url)
-    client.login(USERNAME, PASSWORD)
+    # get client token
     token = client.token
 
     # Create organization data with token
@@ -46,8 +39,8 @@ def setup_and_cleanup():
 
 # Test to create an organization
 @pytest.mark.order(1)
-def test_create_organization():
-    global client, organization_data
+def test_create_organization(client):
+    global organization_data
     response = client.register_organization(
         name=organization_data["name"],
         title=organization_data["title"],

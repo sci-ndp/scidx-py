@@ -1,19 +1,20 @@
 from aiokafka import AIOKafkaProducer
+import json
+import os
 import pytest
 import random
 import string
-import json
 import time
 from scidx.client import sciDXClient
 
 # Constants
-API_URL = "http://localhost:8000"
 KAFKA_HOST = '155.101.6.194'
 KAFKA_PORT = '9092'
 KAFKA_TOPIC_PREFIX = 'random_topic_example_'
-OWNER_ORG = "test_org"
-USERNAME = "placeholder@placeholder.com"
-PASSWORD = "placeholder"
+SCIDX_SOCKET=os.environ["SCIDX_SOCKET"]
+SCIDX_ORG=os.environ["SCIDX_ORG"]
+SCIDX_USER=os.environ["SCIDX_USER"]
+SCIDX_PASSWORD=os.environ["SCIDX_PASSWORD"]
 
 def generate_unique_kafka_topic():
     return KAFKA_TOPIC_PREFIX + ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
@@ -40,8 +41,11 @@ class KafkaProducer:
         
 @pytest.fixture
 def kafka_client():
-    client = sciDXClient(API_URL)
-    client.login(USERNAME, PASSWORD)
+    """
+    Fixture to create and login the client for testing.
+    """
+    client = sciDXClient(SCIDX_SOCKET)
+    client.login(SCIDX_USER, SCIDX_PASSWORD)
     return client
 
 @pytest.mark.asyncio
@@ -56,7 +60,7 @@ async def test_kafka_stream_processing(kafka_client):
     incorrect_dataset_data = {
         "dataset_name": kafka_topic,
         "dataset_title": "Incorrect Kafka Dataset",
-        "owner_org": OWNER_ORG,
+        "owner_org": SCIDX_ORG,
         "kafka_topic": "wrong_topic",
         "kafka_host": "wrong_host",
         "kafka_port": 1234,
@@ -144,7 +148,7 @@ async def test_kafka_stream_processing(kafka_client):
     
     # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting Kafka Resource ===")
-    delete_response = kafka_client.delete_resource(resource_id)
+    delete_response = kafka_client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete Kafka resource"
     

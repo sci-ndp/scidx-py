@@ -1,25 +1,14 @@
+import os
 import pytest
 import random
 import string
-from scidx.client import sciDXClient, StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing
+from scidx.client import StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing
+from . import conftest
 
-# Constants
-API_URL = "http://localhost:8000"
-OWNER_ORG = "test_org"
-USERNAME = "placeholder@placeholder.com"
-PASSWORD = "placeholder"
+SCIDX_ORG=os.environ["SCIDX_ORG"]
 
 def generate_unique_name():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-
-@pytest.fixture
-def client():
-    """
-    Fixture to create and login the client for testing.
-    """
-    client = sciDXClient(API_URL)
-    client.login(USERNAME, PASSWORD)
-    return client
 
 def verify_resource_exists(client, search_term, expected_name):
     """
@@ -43,7 +32,7 @@ def test_stream_url(client):
     response = client.register_url(
         resource_name=resource_name,
         resource_title="Stream Resource Example",
-        owner_org=OWNER_ORG,
+        owner_org=SCIDX_ORG,
         resource_url="http://example.com/stream",
         file_type="stream",
         processing=stream_processing,
@@ -81,7 +70,7 @@ def test_stream_url(client):
     
     # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting Stream Resource ===")
-    delete_response = client.delete_resource(resource_id)
+    delete_response = client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
@@ -98,7 +87,7 @@ def test_csv_url(client):
     response = client.register_url(
         resource_name=resource_name,
         resource_title="CSV Resource Example",
-        owner_org=OWNER_ORG,
+        owner_org=SCIDX_ORG,
         resource_url="http://example.com/csv",
         file_type="CSV",
         processing=csv_processing,
@@ -136,7 +125,7 @@ def test_csv_url(client):
     
     # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting CSV Resource ===")
-    delete_response = client.delete_resource(resource_id)
+    delete_response = client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
@@ -152,7 +141,7 @@ def test_txt_url(client):
     response = client.register_url(
         resource_name=resource_name,
         resource_title="TXT Resource Example",
-        owner_org=OWNER_ORG,
+        owner_org=SCIDX_ORG,
         resource_url="http://example.com/txt",
         file_type="TXT",
         processing=txt_processing,
@@ -190,7 +179,7 @@ def test_txt_url(client):
     
     # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting TXT Resource ===")
-    delete_response = client.delete_resource(resource_id)
+    delete_response = client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
@@ -206,7 +195,7 @@ def test_json_url(client):
     response = client.register_url(
         resource_name=resource_name,
         resource_title="JSON Resource Example",
-        owner_org=OWNER_ORG,
+        owner_org=SCIDX_ORG,
         resource_url="http://example.com/json",
         file_type="JSON",
         processing=json_processing,
@@ -244,7 +233,7 @@ def test_json_url(client):
     
         # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting JSON Resource ===")
-    delete_response = client.delete_resource(resource_id)
+    delete_response = client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 
@@ -260,8 +249,8 @@ def test_netcdf_url(client):
     response = client.register_url(
         resource_name=resource_name,
         resource_title="NetCDF Resource Example",
-        owner_org=OWNER_ORG,
-        resource_url="http://example.com/netcdf",
+        owner_org=SCIDX_ORG,
+        resource_url="http://example.com/netcdf.nc",
         file_type="NetCDF",
         processing=netcdf_processing,
         notes="This is a NetCDF resource for testing.",
@@ -298,7 +287,7 @@ def test_netcdf_url(client):
     
     # Ensure the resource is deleted at the end of the test
     print("\n=== Deleting NetCDF Resource ===")
-    delete_response = client.delete_resource(resource_id)
+    delete_response = client.delete_resource(resource_id=resource_id)
     print(f"Deleted resource: {delete_response}")
     assert delete_response.get("message") == f"{resource_id} deleted successfully", "Failed to delete stream resource"
 

@@ -1,7 +1,6 @@
 import pytest
 import string
 import random
-from scidx.client import sciDXClient
 
 # Helper function to generate a random string
 def generate_random_string(length=8):
@@ -12,14 +11,11 @@ def generate_random_string(length=8):
     return ''.join(random.choice(letters) for i in range(length))
 
 # Test for registering and then deleting an S3 dataset and its organization
-def test_register_and_delete_s3_dataset_and_org():
+def test_register_and_delete_s3_dataset_and_org(client):
     """
     Test the ability to create and then delete an S3 dataset 
     and the associated organization using the real API.
     """
-    # Create a client instance with the actual API URL
-    client = sciDXClient(api_url="http://localhost:8765")
-    
     # Set the token for authentication
     client.token = "test"
     

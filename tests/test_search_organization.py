@@ -1,7 +1,7 @@
 import pytest
 import string
 import random
-from scidx.client import sciDXClient
+from . import conftest
 
 # Helper function to generate a random string
 def generate_random_string(length=8):
@@ -12,13 +12,10 @@ def generate_random_string(length=8):
     return ''.join(random.choice(letters) for i in range(length))
 
 # Test for searching and verifying organization listing
-def test_search_organization():
+def test_search_organization(client):
     """
     Test the ability to list all organizations in the system.
     """
-    # Create a client instance with the actual API URL
-    client = sciDXClient(api_url="http://localhost:8765")
-    
     # Set the token for authentication
     client.token = "test"
     

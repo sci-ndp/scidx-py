@@ -1,6 +1,7 @@
-requests
+aiokafka
 pytest
 pytest-order
-aiokafka
 pytest-asyncio
+pytest-env
 python-dateutil
+requests
