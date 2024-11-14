@@ -1,5 +1,4 @@
-from typing import Union, Optional
-from datetime import datetime
+from typing import Union
 import requests
 
 class StreamProcessing:
@@ -98,33 +97,15 @@ class NetCDFProcessing:
         }
 
 
-def register_url(self, resource_name: str, resource_title: str, owner_org: str,
-                 resource_url: str, file_type: str, processing: Optional[Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing]] = None,
-                 notes: str = "", extras: dict = None, mapping: Optional[dict] = None, timestamp: Optional[datetime] = None) -> dict:
+def register_url(self, payload: dict) -> dict:
     """
-    Create a new URL resource in the sciDX system.
+    Create a new URL resource in the sciDX system using a payload.
 
     Parameters
     ----------
-    resource_name : str
-        The name of the resource.
-    resource_title : str
-        The title of the resource.
-    owner_org : str
-        The name of the organization.
-    resource_url : str
-        The URL of the resource.
-    file_type : str, optional
-        The type of the file (e.g., stream, CSV, TXT, JSON, NetCDF).
-    processing : Union[StreamProcessing, CSVProcessing, TXTProcessing, JSONProcessing, NetCDFProcessing], optional
-        The processing information specific to the file type.
-    notes : str, optional
-        Additional notes about the resource.
-    timestamp : datetime
-    extras : dict, optional
-        Additional metadata to be added to the resource.
-    mapping : dict, optional
-        Mapping information for the dataset.
+    payload : dict
+        The complete payload containing all necessary information 
+        for creating a resource.
 
     Returns
     -------
@@ -134,30 +115,10 @@ def register_url(self, resource_name: str, resource_title: str, owner_org: str,
     url = f"{self.api_url}/url"
     headers = self._get_headers()
 
-    if timestamp:
-        if not extras:
-            extras = {}
-        extras["timestamp"] = timestamp.strftime('%Y-%m-%dT%H:%M:%S')
-
-    # Build the payload
-    payload = {
-        "resource_name": resource_name,
-        "resource_title": resource_title,
-        "owner_org": owner_org,
-        "resource_url": resource_url,
-        "notes": notes,
-        "extras": extras or {},
-        "mapping": mapping or {},
-    }
-
-    if file_type:
-        payload["file_type"] = file_type
-    if processing:
-        payload["processing"] = processing.to_dict()
-
     response = requests.post(url, json=payload, headers=headers)
     if response.status_code == 201:
         return response.json()
     else:
         raise requests.exceptions.HTTPError(f"Error: {response.content.decode('utf-8')}")
+
 
