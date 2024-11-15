@@ -109,7 +109,7 @@ class KafkaMessageConsumer:
                 })
 
                 # Display general statistics table with styling
-                display.display(general_stats.style.hide_index().set_table_styles(
+                display.display(general_stats.style.set_table_styles(
                     [
                         {'selector': 'th', 'props': [('font-weight', 'bold'), ('background-color', '#f2f2f2')]},
                         {'selector': 'td', 'props': [('text-align', 'center'), ('padding', '6px')]}
